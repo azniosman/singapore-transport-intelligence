@@ -63,9 +63,12 @@ ENV/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Data files (optional - uncomment if needed)
-# data/
-# *.csv
+# Data files and databases
+data/
+*.csv
+*.db
+*.pkl
+collector.log
 
 # OS
 Thumbs.db

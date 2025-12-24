@@ -46,12 +46,28 @@ The dashboard refreshes automatically and presents insights through **interactiv
 * **Anomaly Detection**
   Flag unexpected slowdowns in traffic conditions
 
+### 📈 Advanced Features ⭐ NEW
+
+* **🤖 Predictive Delay Modeling**
+  Machine learning model predicts bus arrival delays based on historical patterns
+
+* **📊 Historical Trend Comparison**
+  Compare current conditions with historical data to identify unusual patterns
+
+* **🚨 Alert Notifications for Severe Congestion**
+  Real-time monitoring with in-app and email notifications
+
+* **💾 SQLite Database**
+  Stores historical data for analysis and model training
+
 ### 📈 Insights Panel
 
 Automatically generated insights such as:
 
-* “Traffic speed is 38% below average at 8:45 AM”
-* “Abnormal congestion detected on selected road segments”
+* "Traffic speed is 38% below average at 8:45 AM"
+* "Abnormal congestion detected on selected road segments"
+* "⚠️ Traffic delays are 37% higher than usual"
+* "📊 Worst congestion typically occurs around 18:00"
 
 ---
 
@@ -183,6 +199,44 @@ npm start
 
 The dashboard will open at `http://localhost:3000`
 
+---
+
+### 🌟 Advanced Features Setup (Optional)
+
+To use predictive modeling, historical trends, and alerts:
+
+#### 1️⃣ Start Data Collection
+
+```bash
+# Run once to test
+python3 data_collector.py --once
+
+# Or run continuously (collects every 5 minutes)
+python3 data_collector.py
+```
+
+Run for at least 24 hours to gather training data.
+
+#### 2️⃣ Train ML Model
+
+```bash
+# After collecting 100+ records
+python3 predictive_model.py
+```
+
+#### 3️⃣ Configure Email Alerts (Optional)
+
+Edit `.env` file:
+```bash
+SMTP_USER=your.email@gmail.com
+SMTP_PASSWORD=your_gmail_app_password
+ALERT_EMAIL_TO=recipient@example.com
+```
+
+**📖 Full Guide:** See `ADVANCED_FEATURES.md` for detailed instructions
+
+---
+
 ### Option 2: Streamlit Dashboard (Original)
 
 ```bash
@@ -193,7 +247,14 @@ streamlit run main.py
 
 ## 📝 Recent Updates
 
-### December 2024
+### December 2024 - Major Feature Release 🎉
+- ⭐ **NEW:** Predictive delay modeling using machine learning
+- ⭐ **NEW:** Historical trend comparison and analytics
+- ⭐ **NEW:** Alert notifications for severe congestion (in-app + email)
+- ⭐ **NEW:** SQLite database for historical data storage
+- ⭐ **NEW:** Data collector service for continuous monitoring
+- ✅ Added 5 new API endpoints for advanced features
+- ✅ Created comprehensive `ADVANCED_FEATURES.md` guide
 - ✅ Fixed API endpoint URLs from HTTP to HTTPS
 - ✅ Updated `download_bus_stops.py` to use LTA DataMall API directly
 - ✅ Added comprehensive troubleshooting guide
@@ -284,10 +345,14 @@ pip install -r requirements.txt
 
 ## 🚧 Future Improvements
 
-* Predictive delay modeling
-* Historical trend comparison dashboard
-* Alert notifications for severe congestion
+* ~~Predictive delay modeling~~ ✅ IMPLEMENTED
+* ~~Historical trend comparison dashboard~~ ✅ IMPLEMENTED
+* ~~Alert notifications for severe congestion~~ ✅ IMPLEMENTED
+* Real-time WebSocket updates for live data streaming
+* Mobile app version
+* Integration with traffic camera feeds
 * Cloud deployment with scheduled data storage
+* Multi-city support (expandable to other countries)
 
 ---
 

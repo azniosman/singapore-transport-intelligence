@@ -11,7 +11,7 @@ Integrates with LTA DataMall API
 import os
 import requests
 import pandas as pd
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 from datetime import datetime
@@ -217,6 +217,141 @@ def get_bus_arrivals():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/api/predictions', methods=['GET'])
+def get_predictions():
+    """
+    GET /api/predictions
+
+    Returns delay predictions for current bus arrivals
+    """
+    try:
+        from predictive_model import get_predictor
+
+        # Get current bus arrivals
+        arrivals_response = get_bus_arrivals()
+        arrivals_data = arrivals_response.get_json()
+
+        if isinstance(arrivals_data, dict) and "error" in arrivals_data:
+            return jsonify({"error": "No arrivals data available"}), 500
+
+        # Get predictor and make predictions
+        predictor = get_predictor()
+
+        if not predictor.is_trained:
+            return jsonify({"error": "Model not trained yet. Collect data first."}), 503
+
+        predictions = predictor.predict_multiple(arrivals_data[:50])  # Limit to 50 for performance
+
+        return jsonify(predictions)
+
+    except Exception as e:
+        print(f"Error in get_predictions: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/trends', methods=['GET'])
+def get_trends():
+    """
+    GET /api/trends
+
+    Returns historical trend analysis
+    """
+    try:
+        from analytics import get_analytics
+
+        analytics = get_analytics()
+
+        # Get trends for last 7 days
+        hourly_trends = analytics.get_hourly_trends(days=7)
+        current_vs_historical = analytics.get_current_vs_historical(hours=24)
+        peak_hours = analytics.get_peak_hours_analysis(days=7)
+        insights = analytics.generate_insights()
+
+        return jsonify({
+            "hourly_trends": hourly_trends,
+            "current_vs_historical": current_vs_historical,
+            "peak_hours": peak_hours,
+            "insights": insights
+        })
+
+    except Exception as e:
+        print(f"Error in get_trends: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/alerts', methods=['GET'])
+def get_alerts():
+    """
+    GET /api/alerts
+
+    Returns active congestion alerts
+    """
+    try:
+        from alerts import get_alert_manager
+
+        manager = get_alert_manager()
+
+        # Get severity filter from query params
+        severity = request.args.get('severity')
+
+        active_alerts = manager.get_active_alerts(severity=severity)
+
+        return jsonify({
+            "alerts": active_alerts,
+            "count": len(active_alerts)
+        })
+
+    except Exception as e:
+        print(f"Error in get_alerts: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/alerts/check', methods=['POST'])
+def check_alerts():
+    """
+    POST /api/alerts/check
+
+    Check current conditions and create alerts if needed
+    """
+    try:
+        from alerts import get_alert_manager
+
+        manager = get_alert_manager()
+        new_alerts = manager.check_and_create_alerts()
+
+        return jsonify({
+            "new_alerts": new_alerts,
+            "count": len(new_alerts)
+        })
+
+    except Exception as e:
+        print(f"Error in check_alerts: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/train_model', methods=['POST'])
+def train_model():
+    """
+    POST /api/train_model
+
+    Train the predictive delay model
+    """
+    try:
+        from predictive_model import get_predictor
+
+        predictor = get_predictor()
+        metrics = predictor.train()
+
+        return jsonify({
+            "success": True,
+            "metrics": metrics
+        })
+
+    except Exception as e:
+        print(f"Error in train_model: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
@@ -236,6 +371,11 @@ def index():
         "endpoints": {
             "/api/bus_stops": "GET - Returns all bus stops",
             "/api/bus_arrivals": "GET - Returns real-time bus arrivals",
+            "/api/predictions": "GET - Get delay predictions",
+            "/api/trends": "GET - Get historical trends and analysis",
+            "/api/alerts": "GET - Get active congestion alerts",
+            "/api/alerts/check": "POST - Check and create new alerts",
+            "/api/train_model": "POST - Train the ML prediction model",
             "/api/health": "GET - Health check"
         }
     })
