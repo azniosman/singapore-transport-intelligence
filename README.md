@@ -135,22 +135,39 @@ cd singapore-transport-intelligence
 pip install -r requirements.txt
 ```
 
+Or use pip3 if pip is not available:
+```bash
+pip3 install -r requirements.txt
+```
+
 #### 3️⃣ Set API Keys
 
-The `.env` file already contains your LTA DataMall API key.
+The `.env` file contains your LTA DataMall API key. Verify it's set:
+```bash
+cat .env | grep LTA_API_KEY
+```
 
-#### 4️⃣ Start Backend API Server
+#### 4️⃣ Download Bus Stops Data (Recommended)
+
+For better performance, download the bus stops data once:
+```bash
+python3 download_bus_stops.py
+```
+
+This creates `bus_stops.csv` with ~5,000 bus stops, making the API faster.
+
+#### 5️⃣ Start Backend API Server
 
 ```bash
-python api_server.py
+python3 api_server.py
 ```
 
 The API will start on `http://localhost:5000` with endpoints:
-- `GET /api/bus_stops` - Returns all bus stops
-- `GET /api/bus_arrivals` - Returns real-time bus arrivals
+- `GET /api/bus_stops` - Returns all bus stops (~5,000 stops)
+- `GET /api/bus_arrivals` - Returns real-time bus arrivals (100 stops)
 - `GET /api/health` - Health check
 
-#### 5️⃣ Install Frontend Dependencies
+#### 6️⃣ Install Frontend Dependencies
 
 In a new terminal:
 
@@ -158,7 +175,7 @@ In a new terminal:
 npm install
 ```
 
-#### 6️⃣ Start React Frontend
+#### 7️⃣ Start React Frontend
 
 ```bash
 npm start
@@ -171,6 +188,82 @@ The dashboard will open at `http://localhost:3000`
 ```bash
 streamlit run main.py
 ```
+
+---
+
+## 📝 Recent Updates
+
+### December 2024
+- ✅ Fixed API endpoint URLs from HTTP to HTTPS
+- ✅ Updated `download_bus_stops.py` to use LTA DataMall API directly
+- ✅ Added comprehensive troubleshooting guide
+- ✅ Improved setup instructions with virtual environment support
+- ✅ Added API testing documentation (`API_TESTING.md`)
+
+---
+
+## ⚠️ Important Notes
+
+### API Endpoints
+All LTA DataMall API endpoints use **HTTPS**:
+- ✅ `https://datamall2.mytransport.sg/ltaodataservice/BusStops`
+- ✅ `https://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2`
+
+**Note:** Using `http://` will result in 404 errors.
+
+### Performance Considerations
+- **Bus Stops API**: Fast (~100ms) after initial load, data is cached
+- **Bus Arrivals API**: Slower (30-60 seconds) as it fetches from 100 bus stops in real-time
+- **Recommended**: Run `download_bus_stops.py` first to create a local CSV cache
+
+---
+
+## 🔧 Troubleshooting
+
+### Download Script Returns 404
+**Problem:** `python3 download_bus_stops.py` fails with 404 error
+
+**Solutions:**
+1. Ensure you're using the latest code (uses HTTPS)
+2. Verify API key is correct in `.env` file
+3. Check your internet connection
+4. Verify API key has access at [LTA DataMall](https://datamall.lta.gov.sg/)
+
+### Module Not Found Errors
+**Problem:** `ModuleNotFoundError: No module named 'flask'` or similar
+
+**Solution:** Install dependencies:
+```bash
+pip3 install -r requirements.txt
+```
+
+If using system Python on macOS, you may need to use a virtual environment:
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### API Returns No Data
+**Problem:** Endpoints return empty arrays
+
+**Solutions:**
+1. Check API key is valid and active
+2. Verify you're connected to the internet
+3. Check LTA API status (may have rate limits: 500 req/sec)
+4. Try testing with curl:
+   ```bash
+   curl -H "AccountKey: YOUR_KEY" \
+     "https://datamall2.mytransport.sg/ltaodataservice/BusStops?\$skip=0"
+   ```
+
+### Frontend Can't Connect to Backend
+**Problem:** React app shows "Failed to fetch" errors
+
+**Solutions:**
+1. Ensure backend is running on `http://localhost:5000`
+2. Check CORS is enabled (already configured in `api_server.py`)
+3. Verify `.env` has `REACT_APP_API_URL=http://localhost:5000`
 
 ---
 
