@@ -5,3 +5,5 @@ pydeck==0.8.0b3
 plotly==5.16.1
 uvicorn==0.23.2
 python-dotenv==1.0.0
+flask==3.0.0
+flask-cors==4.0.0

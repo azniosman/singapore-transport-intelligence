@@ -120,31 +120,56 @@ singapore-transport-dashboard/
 
 ## 🚀 Getting Started
 
-### 1️⃣ Clone the Repository
+### Option 1: React Dashboard (Recommended)
+
+#### 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/azniosman/singapore-transport-intelligence.git
 cd singapore-transport-intelligence
 ```
 
-### 2️⃣ Install Dependencies
+#### 2️⃣ Install Python Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3️⃣ Set API Keys
+#### 3️⃣ Set API Keys
 
-Create an environment variable for your **LTA DataMall API key**:
+The `.env` file already contains your LTA DataMall API key.
+
+#### 4️⃣ Start Backend API Server
 
 ```bash
-export LTA_API_KEY="your_api_key_here"
+python api_server.py
 ```
 
-### 4️⃣ Run the Dashboard
+The API will start on `http://localhost:5000` with endpoints:
+- `GET /api/bus_stops` - Returns all bus stops
+- `GET /api/bus_arrivals` - Returns real-time bus arrivals
+- `GET /api/health` - Health check
+
+#### 5️⃣ Install Frontend Dependencies
+
+In a new terminal:
 
 ```bash
-streamlit run app.py
+npm install
+```
+
+#### 6️⃣ Start React Frontend
+
+```bash
+npm start
+```
+
+The dashboard will open at `http://localhost:3000`
+
+### Option 2: Streamlit Dashboard (Original)
+
+```bash
+streamlit run main.py
 ```
 
 ---
