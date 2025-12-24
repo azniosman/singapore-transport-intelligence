@@ -13,7 +13,7 @@ load_dotenv()
 
 # Configuration
 API_KEY = os.getenv("LTA_API_KEY")
-LTA_BUS_STOPS_API = "http://datamall2.mytransport.sg/ltaodataservice/BusStops"
+LTA_BUS_STOPS_API = "https://datamall2.mytransport.sg/ltaodataservice/BusStops"
 OUTPUT_FILE = "bus_stops.csv"
 
 def download_bus_stops():

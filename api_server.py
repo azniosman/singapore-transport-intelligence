@@ -25,8 +25,8 @@ CORS(app)  # Enable CORS for React frontend
 
 # Configuration
 API_KEY = os.getenv("LTA_API_KEY")
-LTA_BUS_STOPS_API = "http://datamall2.mytransport.sg/ltaodataservice/BusStops"
-LTA_BUS_ARRIVAL_API = "http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2"
+LTA_BUS_STOPS_API = "https://datamall2.mytransport.sg/ltaodataservice/BusStops"
+LTA_BUS_ARRIVAL_API = "https://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2"
 BUS_STOPS_CSV = "bus_stops.csv"
 
 # In-memory cache for bus stops (to avoid repeated API calls)
